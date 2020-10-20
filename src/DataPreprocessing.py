@@ -1,6 +1,5 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-from odbc import dataError
 
 source_path = '../data/UniversalBank.csv'
 
