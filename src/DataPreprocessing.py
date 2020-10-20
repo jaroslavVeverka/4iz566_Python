@@ -1,4 +1,6 @@
 import pandas as pd
+import matplotlib.pyplot as plt
+from odbc import dataError
 
 source_path = '../data/UniversalBank.csv'
 
@@ -9,5 +11,16 @@ dataFile = pd.read_csv(source_path)
 data = pd.DataFrame(dataFile)
 
 # print first 10 rows and names of columns
-print(data.head(10))
+print(data.head(20))
 print(list(data.columns))
+
+#some plots
+plt.hist(data['CreditCard'], bins=2, rwidth=0.85)
+
+plt.title('Histogram of Credit Card variable')
+plt.xlabel('CreditCard')
+plt.ylabel('Count')
+plt.xticks([0,1], ['no', 'yes'])
+plt.grid(axis='y')
+plt.show()
+
