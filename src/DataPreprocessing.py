@@ -10,8 +10,6 @@ dataFile = pd.read_csv(source_path)
 data = pd.DataFrame(dataFile)
 
 print(data.isnull().sum())
-
-# print first 10 rows and names of columns
 print(data.head(10))
 print(list(data.columns))
 
