@@ -9,6 +9,8 @@ dataFile = pd.read_csv(source_path)
 # convert dataFile to Pandas DataFrame
 data = pd.DataFrame(dataFile)
 
+print(data.isnull().sum())
+
 # print first 10 rows and names of columns
 print(data.head(10))
 print(list(data.columns))
@@ -22,4 +24,8 @@ plt.ylabel('Count')
 plt.xticks([0,1], ['no', 'yes'])
 plt.grid(axis='y')
 plt.show()
+plt.clf()
+
+
+
 
