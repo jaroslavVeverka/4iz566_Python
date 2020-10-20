@@ -1,6 +1,6 @@
 import pandas as pd
 
-source_path = '../data/carInsurance.csv'
+source_path = '../data/UniversalBank.csv'
 
 # load csv dataset
 dataFile = pd.read_csv(source_path)
