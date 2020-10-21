@@ -4,10 +4,7 @@ import matplotlib.pyplot as plt
 source_path = '../data/UniversalBank.csv'
 
 # load csv dataset
-dataFile = pd.read_csv(source_path)
-
-# convert dataFile to Pandas DataFrame
-data = pd.DataFrame(dataFile)
+data = pd.read_csv(source_path)
 
 print(data.isnull().sum())
 print(data.head(10))
@@ -23,6 +20,7 @@ plt.xticks([0.25,0.75], ['no', 'yes'])
 plt.grid(axis='y')
 plt.show()
 plt.clf()
+
 
 
 
