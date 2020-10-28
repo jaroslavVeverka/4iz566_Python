@@ -97,6 +97,19 @@ plt.title('Heatmap for the Dataset', fontsize = 20)
 
 plt.show()
 
+#
+from sklearn.preprocessing import StandardScaler
+
+scaler = StandardScaler()
+scaler.fit(data.loc[:, ['Age', 'Income', 'CCAvg', 'Mortgage']])
+
+data.loc[:, ['Age', 'Income', 'CCAvg', 'Mortgage']] = scaler.transform(data.loc[:,
+                                                                       ['Age', 'Income', 'CCAvg', 'Mortgage']])
+
+
+data = data.drop(columns='Experience')
+
+
 # save preprocessed data as csv
 final_data_path = './../data/UniversalBank_preprocessed.csv'
 data.to_csv(final_data_path, index=False)
