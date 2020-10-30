@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import h5py
+from sklearn.model_selection import train_test_split
 
 source_path = '../data/UniversalBank.csv'
 
@@ -27,6 +28,7 @@ print(f'[MISSING_VALUES] Are in dataset any missing values:\n', data.isnull().va
 print(f'[MISSING_VALUES] Number of missing values:\n', data.isnull().sum().sum())
 print(f'[MISSING_VALUES] Number of missing values after columns:\n', data.isnull().sum())
 
+# drop unuseful variables
 data = data.drop(columns=['ID', 'ZIP_Code'])
 
 # creating of histograms for all variables
@@ -35,10 +37,6 @@ plt.show()
 
 # dichotomizaton of categorical variables
 data = pd.get_dummies(data, columns=['Family', 'Education'], drop_first=True)
-
-# # create sub-dataframe
-# print(data.loc[:, ['CreditCard']])
-# print(data[['CreditCard']])
 
 # creating of conditional distribution of variables to the target variable
 fig, axs = plt.subplots(nrows=4, ncols=4)
@@ -97,9 +95,41 @@ plt.title('Heatmap for the Dataset', fontsize = 20)
 
 plt.show()
 
+# drop variable due to multicolinerity with Age
+data = data.drop(columns='Experience')
+
+# dependent and independents variables
+Y = data['Personal_Loan']
+X = data.drop(columns=['Personal_Loan'])
+
+# split dataset into train and test part 8:2
+X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, stratify=Y, random_state=1)
+print(f'Number of train X: ', X_train.shape)
+print(f'Number of test X: ', X_test.shape)
+
+# Applying of scaling on continuous variables
+from sklearn.preprocessing import StandardScaler
+
+scaler = StandardScaler()
+scaler.fit_transform(X_train.loc[:, ['Age', 'Income', 'CCAvg', 'Mortgage']])
+
+X_train.loc[:, ['Age', 'Income', 'CCAvg', 'Mortgage']] = scaler.transform(X_train.loc[:,
+                                                                          ['Age', 'Income', 'CCAvg', 'Mortgage']])
+X_test.loc[:, ['Age', 'Income', 'CCAvg', 'Mortgage']] = scaler.transform(X_test.loc[:,
+                                                                         ['Age', 'Income', 'CCAvg', 'Mortgage']])
+#
+train_data = pd.concat([y_train, X_train], axis=1)
+test_data = pd.concat([y_test, X_test], axis=1)
+print(f'Number of train data: ', train_data.shape)
+print(f'Number of train data: ', test_data.shape)
+
 # save preprocessed data as csv
-final_data_path = './../data/UniversalBank_preprocessed.csv'
-data.to_csv(final_data_path, index=False)
+train_data_path = './../data/UniversalBank_Train.csv'
+train_data.to_csv(train_data_path, index=False)
+
+# save preprocessed data as csv
+test_data_path = './../data/UniversalBank_Test.csv'
+test_data.to_csv(test_data_path, index=False)
 
 
 
