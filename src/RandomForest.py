@@ -6,17 +6,17 @@ from sklearn.metrics import roc_auc_score, confusion_matrix, accuracy_score, cla
 from sklearn.model_selection import train_test_split
 
 # loading data from csv file
-data_path = './../data/UniversalBank_preprocessed.csv'
-data = pd.read_csv(data_path)
-
-print(data.head())
+train_data_path = './../data/UniversalBank_Train.csv'
+test_data_path = './../data/UniversalBank_Test.csv'
+train_data = pd.read_csv(train_data_path)
+test_data = pd.read_csv(test_data_path)
 
 # dependent and independents variables
-Y = data['Personal_Loan']
-X = data.drop(columns=['Personal_Loan'])
+y_train = train_data['Personal_Loan']
+y_test = test_data['Personal_Loan']
+X_train = train_data.drop(columns=['Personal_Loan'])
+X_test = test_data.drop(columns=['Personal_Loan'])
 
-# split dataset into train and test part 8:2
-X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, stratify=Y, random_state=1)
 print(f'Number of train X: ', X_train.shape)
 print(f'Number of test X: ', X_test.shape)
 
@@ -59,7 +59,7 @@ plt.show()
 
 from sklearn import tree
 plt.figure(figsize=(20,20))
-_ = tree.plot_tree(rf_0.estimators_[0], feature_names=X.columns, filled=True)
+_ = tree.plot_tree(rf_0.estimators_[0], feature_names=X_train.columns, filled=True)
 plt.show()
 
 #
@@ -126,5 +126,5 @@ plt.show()
 
 from sklearn import tree
 plt.figure(figsize=(20,20))
-_ = tree.plot_tree(rf_1.estimators_[0], feature_names=X.columns, filled=True)
+_ = tree.plot_tree(rf_1.estimators_[0], feature_names=X_train.columns, filled=True)
 plt.show()

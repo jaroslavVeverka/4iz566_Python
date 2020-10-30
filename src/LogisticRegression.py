@@ -2,21 +2,22 @@ import pandas as pd
 from mlxtend.feature_selection import SequentialFeatureSelector as SFS
 from mlxtend.plotting import plot_sequential_feature_selection as plot_sfs
 from sklearn import linear_model
+from sklearn.ensemble._gradient_boosting import np_bool
 from sklearn.metrics import roc_auc_score, confusion_matrix, accuracy_score, classification_report
 from sklearn.model_selection import train_test_split
 
 # loading data from csv file
-data_path = './../data/UniversalBank_preprocessed.csv'
-data = pd.read_csv(data_path)
-
-print(data.head())
+train_data_path = './../data/UniversalBank_Train.csv'
+test_data_path = './../data/UniversalBank_Test.csv'
+train_data = pd.read_csv(train_data_path)
+test_data = pd.read_csv(test_data_path)
 
 # dependent and independents variables
-Y = data['Personal_Loan']
-X = data.drop(columns=['Personal_Loan'])
+y_train = train_data['Personal_Loan']
+y_test = test_data['Personal_Loan']
+X_train = train_data.drop(columns=['Personal_Loan'])
+X_test = test_data.drop(columns=['Personal_Loan'])
 
-# split dataset into train and test part 8:2
-X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, stratify=Y, random_state=1)
 print(f'Number of train X: ', X_train.shape)
 print(f'Number of test X: ', X_test.shape)
 
@@ -64,11 +65,11 @@ plt.show()
 #
 
 # Balancing training dataset with SMOTE method using oversampling
-from imblearn.over_sampling import SMOTE
-
-X_train, y_train = SMOTE().fit_resample(X_train, y_train)
-print(f'[TARGET DISTRIBUTION] Number of target in train dataset with value 0:\n', sum(y_train == 0))
-print(f'[TARGET DISTRIBUTION] Number of target in train dataset with value 1:\n', sum(y_train == 1))
+# from imblearn.over_sampling import SMOTE
+#
+# X_train, y_train = SMOTE().fit_resample(X_train, y_train)
+# print(f'[TARGET DISTRIBUTION] Number of target in train dataset with value 0:\n', sum(y_train == 0))
+# print(f'[TARGET DISTRIBUTION] Number of target in train dataset with value 1:\n', sum(y_train == 1))
 
 logit_1 = linear_model.LogisticRegression(max_iter=10000)
 
@@ -77,7 +78,7 @@ sfs1 = SFS(logit_1,
            forward=True,
            floating=False,
            verbose=2,
-           scoring='accuracy',
+           scoring='neg_root_mean_squared_error',
            cv=10)
 
 sfs1 = sfs1.fit(X_train, y_train)
@@ -139,15 +140,15 @@ from sklearn.model_selection import GridSearchCV
 param_grid = {
     'solver': ['newton-cg', 'lbfgs', 'liblinear'],
     'penalty': ['l2'],
-    'C': [0.001, 0.01, 0.1, 1, 10, 100]
+    'C': [0.001, 0.01, 0.1, 1.0, 10.0, 100.0]
 }
 
 logit_cv_grid = GridSearchCV(estimator=linear_model.LogisticRegression(max_iter=10000),
                              param_grid=param_grid,
                              cv=10,
-                             scoring='accuracy')
+                             scoring='neg_root_mean_squared_error')
 
-logit_cv_grid.fit(X_train, y_train)
+logit_cv_grid.fit(X_train_sfs, y_train)
 print(logit_cv_grid.best_score_, logit_cv_grid.best_params_)
 
 logit_3 = logit_cv_grid.best_estimator_
@@ -155,8 +156,8 @@ logit_3 = logit_cv_grid.best_estimator_
 print('[LOGIT_3] Estimated coefficient:\n', logit_3.coef_)
 
 # testing
-predicted_target = logit_3.predict(X_test)
-predicted_proba = logit_3.predict_proba(X_test)
+predicted_target = logit_3.predict(X_test_sfs)
+predicted_proba = logit_3.predict_proba(X_test_sfs)
 predicted_proba_target = predicted_proba[:, 1]
 
 # evaluation
@@ -177,6 +178,7 @@ plt.show()
 
 skplt.metrics.plot_lift_curve(y_test, predicted_proba)
 plt.show()
+
 
 # logit = linear_model.LogisticRegression(max_iter = 10000)
 #
