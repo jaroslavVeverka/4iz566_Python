@@ -82,7 +82,7 @@ print(f'[TARGET DISTRIBUTION] Number of target with value 1:\n', sum(data['Perso
 
 # creating of Feature-Feature Relationships via scatter_matrix
 from pandas.plotting import scatter_matrix
-scatter_matrix(data, figsize=(30, 30), diagonal='kde')
+scatter_matrix(data, c=data.loc[:, 'Personal_Loan'], figsize=(30, 30), diagonal='kde')
 plt.show()
 
 # creating of correlation matrix
