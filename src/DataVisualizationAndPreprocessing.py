@@ -111,7 +111,7 @@ print(f'Number of test X: ', X_test.shape)
 from sklearn.preprocessing import StandardScaler
 
 scaler = StandardScaler()
-scaler.fit_transform(X_train.loc[:, ['Age', 'Income', 'CCAvg', 'Mortgage']])
+scaler.fit(X_train.loc[:, ['Age', 'Income', 'CCAvg', 'Mortgage']])
 
 X_train.loc[:, ['Age', 'Income', 'CCAvg', 'Mortgage']] = scaler.transform(X_train.loc[:,
                                                                           ['Age', 'Income', 'CCAvg', 'Mortgage']])
