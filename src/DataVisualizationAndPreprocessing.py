@@ -1,7 +1,9 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-import h5py
+import seaborn as sns
+
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
 
 source_path = '../data/UniversalBank.csv'
 
@@ -81,12 +83,12 @@ print(f'[TARGET DISTRIBUTION] Number of target with value 0:\n', sum(data['Perso
 print(f'[TARGET DISTRIBUTION] Number of target with value 1:\n', sum(data['Personal_Loan'] == 1))
 
 # creating of Feature-Feature Relationships via scatter_matrix
-from pandas.plotting import scatter_matrix
-scatter_matrix(data, c=data.loc[:, 'Personal_Loan'], figsize=(30, 30), diagonal='kde')
+
+pd.plotting.scatter_matrix(data, c=data.loc[:, 'Personal_Loan'], figsize=(30, 30), diagonal='kde')
 plt.show()
 
 # creating of correlation matrix
-import seaborn as sns
+
 
 corr_matrix = data.corr()
 plt.subplots(figsize=(20,15))
@@ -108,7 +110,7 @@ print(f'Number of train X: ', X_train.shape)
 print(f'Number of test X: ', X_test.shape)
 
 # Applying of scaling on continuous variables
-from sklearn.preprocessing import StandardScaler
+
 
 scaler = StandardScaler()
 scaler.fit(X_train.loc[:, ['Age', 'Income', 'CCAvg', 'Mortgage']])
