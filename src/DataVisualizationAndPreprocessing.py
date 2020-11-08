@@ -98,6 +98,10 @@ plt.show()
 # drop variable due to multicolinerity with Age
 data = data.drop(columns='Experience')
 
+# save preprocessed data as csv
+data_path = './../data/UniversalBank_Final.csv'
+data.to_csv(data_path, index=False)
+
 # dependent and independents variables
 Y = data['Personal_Loan']
 X = data.drop(columns=['Personal_Loan'])

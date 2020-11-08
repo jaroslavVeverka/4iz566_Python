@@ -195,21 +195,15 @@ print(classification_report(y_test, predicted_target))
 # # Toto se opakuje do doby kdy neni v modelu pocet pozadovanych promennych, nebo do doby, kdy je pocet
 # # promenych v pozadovanem intervalu a dalsi iterace neprinasi zlepseni predikcnich schopnosti.
 
-
+### SELECTKBEST ###
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import GridSearchCV
-from sklearn.feature_selection  import SelectKBest, f_classif
+from sklearn.feature_selection import SelectKBest
 
 logit_4 = linear_model.LogisticRegression(max_iter=10000)
+selector = SelectKBest()
 
-# sfs2 = SFS(estimator=logit_4,
-#            k_features=(1,13),
-#            forward=True,
-#            floating=False,
-#            scoring='neg_root_mean_squared_error',
-#            cv=3)
-
-pipe = Pipeline([('selector', SelectKBest(f_classif, k=1)),
+pipe = Pipeline([('selector', selector),
                  ('classifier', logit_4)])
 
 param_grid = {
@@ -232,24 +226,118 @@ gs = gs.fit(X_train, y_train)
 for i in range(len(gs.cv_results_['params'])):
     print(gs.cv_results_['params'][i], 'test acc.:', gs.cv_results_['mean_test_score'][i])
 
-
 print("Best parameters via GridSearch", gs.best_params_)
 
 logit_4 = gs.best_estimator_
-#logit_3.fit(X_train, y_train)
-print('[LOGIT_3] Estimated coefficient:\n', logit_4)
+# logit_3.fit(X_train, y_train)
+print('[LOGIT_3] Estimated coefficient:\n', logit_4.get_params())
 
 # testing
 predicted_target = logit_4.predict(X_test)
-predicted_proba = logit_4.predict_proba(X_test)
-predicted_proba_target = predicted_proba[:, 1]
 
 # evaluation
-auc_value_4 = roc_auc_score(y_test, predicted_proba_target)
-print('[LOGIT_3] AUC value of model:\n', auc_value_4)
-
 acc_score_4 = accuracy_score(y_test, predicted_target)
 conf_matrix_4 = confusion_matrix(predicted_target, y_test, labels=[0, 1])
 print(acc_score_4)
 print(conf_matrix_4)
 print(classification_report(y_test, predicted_target))
+
+### RFECV ###
+from sklearn.pipeline import Pipeline
+from sklearn.model_selection import GridSearchCV
+from sklearn.feature_selection import RFECV
+
+logit_4 = linear_model.LogisticRegression(max_iter=10000)
+selector = RFECV(estimator=logit_4, cv=10, scoring='neg_root_mean_squared_error')
+
+pipe = Pipeline([('selector', selector),
+                 ('classifier', logit_4)])
+
+param_grid = {
+    'classifier__solver': ['newton-cg', 'lbfgs', 'liblinear'],
+    'classifier__penalty': ['l2'],
+    'classifier__C': [0.001, 0.01, 0.1, 1.0, 10.0, 100.0]
+}
+
+gs = GridSearchCV(estimator=pipe,
+                  param_grid=param_grid,
+                  scoring='neg_root_mean_squared_error',
+                  n_jobs=1,
+                  cv=10,
+                  iid=True)
+
+# run gridearch
+gs = gs.fit(X_train, y_train)
+
+for i in range(len(gs.cv_results_['params'])):
+    print(gs.cv_results_['params'][i], 'test acc.:', gs.cv_results_['mean_test_score'][i])
+
+print("Best parameters via GridSearch", gs.best_params_)
+
+logit_4 = gs.best_estimator_
+# logit_3.fit(X_train, y_train)
+print('[LOGIT_3] Estimated coefficient:\n', logit_4)
+
+# testing
+predicted_target = logit_4.predict(X_test)
+
+# evaluation
+acc_score_4 = accuracy_score(y_test, predicted_target)
+conf_matrix_4 = confusion_matrix(predicted_target, y_test, labels=[0, 1])
+print(acc_score_4)
+print(conf_matrix_4)
+print(classification_report(y_test, predicted_target))
+
+# ### SFS ###
+# from sklearn.pipeline import Pipeline
+# from sklearn.model_selection import GridSearchCV
+# from sklearn.feature_selection import RFECV
+#
+# logit_4 = linear_model.LogisticRegression(max_iter=10000)
+# selector = SFS(logit_4,
+#                k_features=1,
+#                forward=True,
+#                floating=False,
+#                verbose=2,
+#                scoring='neg_root_mean_squared_error',
+#                cv=10)
+#
+# pipe = Pipeline([('selector', selector),
+#                  ('classifier', logit_4)])
+#
+# param_grid = {
+#     'selector__k_features': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+#     'classifier__solver': ['newton-cg', 'lbfgs', 'liblinear'],
+#     'classifier__penalty': ['l2'],
+#     'classifier__C': [0.001, 0.01, 0.1, 1.0, 10.0, 100.0]
+# }
+#
+# gs = GridSearchCV(estimator=pipe,
+#                   param_grid=param_grid,
+#                   scoring='neg_root_mean_squared_error',
+#                   n_jobs=1,
+#                   cv=10,
+#                   iid=True)
+#
+# # run gridearch
+# gs = gs.fit(X_train, y_train)
+#
+# for i in range(len(gs.cv_results_['params'])):
+#     print(gs.cv_results_['params'][i], 'test acc.:', gs.cv_results_['mean_test_score'][i])
+#
+# print("Best parameters via GridSearch", gs.best_params_)
+# print('Best features:', gs.best_estimator_.steps[0][1].k_feature_idx_)
+#
+# logit_4 = gs.best_estimator_
+# # logit_3.fit(X_train, y_train)
+# print('[LOGIT_3] Estimated coefficient:\n', logit_4)
+#
+# # testing
+# predicted_target = logit_4.predict(X_test)
+#
+# # evaluation
+# acc_score_4 = accuracy_score(y_test, predicted_target)
+# conf_matrix_4 = confusion_matrix(predicted_target, y_test, labels=[0, 1])
+# print(acc_score_4)
+# print(conf_matrix_4)
+# print(classification_report(y_test, predicted_target))
