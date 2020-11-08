@@ -82,7 +82,7 @@ print(f'[TARGET DISTRIBUTION] Number of target with value 1:\n', sum(data['Perso
 
 # creating of Feature-Feature Relationships via scatter_matrix
 from pandas.plotting import scatter_matrix
-scatter_matrix(data, figsize=(30, 30), diagonal='kde')
+scatter_matrix(data, c=data.loc[:, 'Personal_Loan'], figsize=(30, 30), diagonal='kde')
 plt.show()
 
 # creating of correlation matrix
@@ -111,7 +111,7 @@ print(f'Number of test X: ', X_test.shape)
 from sklearn.preprocessing import StandardScaler
 
 scaler = StandardScaler()
-scaler.fit_transform(X_train.loc[:, ['Age', 'Income', 'CCAvg', 'Mortgage']])
+scaler.fit(X_train.loc[:, ['Age', 'Income', 'CCAvg', 'Mortgage']])
 
 X_train.loc[:, ['Age', 'Income', 'CCAvg', 'Mortgage']] = scaler.transform(X_train.loc[:,
                                                                           ['Age', 'Income', 'CCAvg', 'Mortgage']])
