@@ -5,30 +5,29 @@ import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
+# nacteni vychoziho datasetu
 source_path = '../data/UniversalBank.csv'
-
-# load csv dataset
 data = pd.read_csv(source_path)
 
 # basic understanding of data
-print(f'[BASIC_UNDERSTANDING] Dimension of the dataset:\n', data.shape)
-print(f'[BASIC_UNDERSTANDING] Data types for each column:\n', data.dtypes)
-print(f'[BASIC_UNDERSTANDING] First five rows:\n', data.head())
-print(f'[BASIC_UNDERSTANDING] Last five rows:\n', data.tail())
-print(f'[BASIC_UNDERSTANDING] Column names:\n', data.columns.tolist())
-data.apply(lambda x: print(f'Data distribution of columns\n', x.describe()))
-print(f'[BASIC UNDERSTANDING] Data distribution:\n', data.apply(lambda x: x.describe()))
+print('[BASIC_UNDERSTANDING] Dimension of the dataset:\n', data.shape)
+print('[BASIC_UNDERSTANDING] Data types for each column:\n', data.dtypes)
+print('[BASIC_UNDERSTANDING] First five rows:\n', data.head())
+print('[BASIC_UNDERSTANDING] Last five rows:\n', data.tail())
+print('[BASIC_UNDERSTANDING] Column names:\n', data.columns.tolist())
+data.apply(lambda x: print('Data distribution of columns\n', x.describe()))
+print('[BASIC UNDERSTANDING] Data distribution:\n', data.describe())
+
+# check missing values
+print(f'[MISSING_VALUES] Are in dataset any missing values:\n', data.isnull().values.any())
+print(f'[MISSING_VALUES] Number of missing values:\n', data.isnull().sum().sum())
+print(f'[MISSING_VALUES] Number of missing values after columns:\n', data.isnull().sum())
 
 # rename name of variables with white space
 data = data.rename(columns={'ZIP Code': 'ZIP_Code',
                             'Personal Loan': 'Personal_Loan',
                             'Securities Account': 'Securities_Account',
                             'CD Account': 'CD_Account'})
-
-# check missing values
-print(f'[MISSING_VALUES] Are in dataset any missing values:\n', data.isnull().values.any())
-print(f'[MISSING_VALUES] Number of missing values:\n', data.isnull().sum().sum())
-print(f'[MISSING_VALUES] Number of missing values after columns:\n', data.isnull().sum())
 
 # drop unuseful variables
 data = data.drop(columns=['ID', 'ZIP_Code'])
@@ -41,37 +40,36 @@ plt.show()
 data = pd.get_dummies(data, columns=['Family', 'Education'], drop_first=True)
 
 # creating of conditional distribution of variables to the target variable
-fig, axs = plt.subplots(nrows=4, ncols=4)
-fig.suptitle('Conditional distribution of variables to the target variable', fontsize=16)
+fig, axs = plt.subplots(nrows=7, ncols=2)
 
-data.groupby('Personal_Loan').Age.hist(bins=10, figsize=(15, 10), alpha=0.4, ax=axs[0, 0], legend=True)
+data.groupby('Personal_Loan').Age.hist(bins=10, figsize=(15, 20), alpha=0.4, ax=axs[0, 0], legend=True)
 axs[0, 0].set(xlabel='Age', ylabel='Count')
-data.groupby('Personal_Loan').Experience.hist(bins=10, figsize=(15, 10), alpha=0.4, ax=axs[0, 1], legend=True)
+data.groupby('Personal_Loan').Experience.hist(bins=10, figsize=(15, 20), alpha=0.4, ax=axs[0, 1], legend=True)
 axs[0, 1].set(xlabel='Experience', ylabel='Count')
-data.groupby('Personal_Loan').Income.hist(bins=10, figsize=(15, 10), alpha=0.4, ax=axs[0, 2], legend=True)
-axs[0, 2].set(xlabel='Income', ylabel='Count')
-data.groupby('Personal_Loan').Family_2.hist(bins=10, figsize=(15, 10), alpha=0.4, ax=axs[0, 3], legend=True)
-axs[0, 3].set(xlabel='Family_2', ylabel='Count')
-data.groupby('Personal_Loan').Family_3.hist(bins=10, figsize=(15, 10), alpha=0.4, ax=axs[1, 0], legend=True)
-axs[1, 0].set(xlabel='Family_3', ylabel='Count')
-data.groupby('Personal_Loan').Family_4.hist(bins=10, figsize=(15, 10), alpha=0.4, ax=axs[1, 1], legend=True)
-axs[1, 1].set(xlabel='Family_4', ylabel='Count')
-data.groupby('Personal_Loan').CCAvg.hist(bins=10, figsize=(15, 10), alpha=0.4, ax=axs[1, 2], legend=True)
-axs[1, 2].set(xlabel='CCAvg', ylabel='Count')
-data.groupby('Personal_Loan').Education_2.hist(bins=10, figsize=(15, 10), alpha=0.4, ax=axs[1, 3], legend=True)
-axs[1, 3].set(xlabel='Education_2', ylabel='Count')
-data.groupby('Personal_Loan').Education_3.hist(bins=10, figsize=(15, 10), alpha=0.4, ax=axs[2, 0], legend=True)
-axs[2, 0].set(xlabel='Education_3', ylabel='Count')
-data.groupby('Personal_Loan').Mortgage.hist(bins=10, figsize=(15, 10), alpha=0.4, ax=axs[2, 1], legend=True)
-axs[2, 1].set(xlabel='Mortgage', ylabel='Count')
-data.groupby('Personal_Loan').CreditCard.hist(bins=10, figsize=(15, 10), alpha=0.4, ax=axs[2, 2], legend=True)
-axs[2, 2].set(xlabel='Personal_Loan', ylabel='Count')
-data.groupby('Personal_Loan').Securities_Account.hist(bins=10, figsize=(15, 10), alpha=0.4, ax=axs[2, 3], legend=True)
-axs[2, 3].set(xlabel='Securities_Account', ylabel='Count')
-data.groupby('Personal_Loan').CD_Account.hist(bins=10, figsize=(15, 10), alpha=0.4, ax=axs[3, 0], legend=True)
-axs[3, 0].set(xlabel='CD_Account', ylabel='Count')
-data.groupby('Personal_Loan').Online.hist(bins=10, figsize=(15, 10), alpha=0.4, ax=axs[3, 1], legend=True, )
-axs[3, 1].set(xlabel='Online', ylabel='Count')
+data.groupby('Personal_Loan').Income.hist(bins=10, figsize=(15, 20), alpha=0.4, ax=axs[1, 0], legend=True)
+axs[1, 0].set(xlabel='Income', ylabel='Count')
+data.groupby('Personal_Loan').Family_2.hist(bins=2, figsize=(15, 20), alpha=0.4, ax=axs[1, 1], legend=True)
+axs[1, 1].set(xlabel='Family_2', ylabel='Count')
+data.groupby('Personal_Loan').Family_3.hist(bins=2, figsize=(15, 20), alpha=0.4, ax=axs[2, 0], legend=True)
+axs[2, 0].set(xlabel='Family_3', ylabel='Count')
+data.groupby('Personal_Loan').Family_4.hist(bins=2, figsize=(15, 20), alpha=0.4, ax=axs[2, 1], legend=True)
+axs[2, 1].set(xlabel='Family_4', ylabel='Count')
+data.groupby('Personal_Loan').CCAvg.hist(bins=10, figsize=(15, 20), alpha=0.4, ax=axs[3, 0], legend=True)
+axs[3, 0].set(xlabel='CCAvg', ylabel='Count')
+data.groupby('Personal_Loan').Education_2.hist(bins=2, figsize=(15, 20), alpha=0.4, ax=axs[3, 1], legend=True)
+axs[3, 1].set(xlabel='Education_2', ylabel='Count')
+data.groupby('Personal_Loan').Education_3.hist(bins=2, figsize=(15, 20), alpha=0.4, ax=axs[4, 0], legend=True)
+axs[4, 0].set(xlabel='Education_3', ylabel='Count')
+data.groupby('Personal_Loan').Mortgage.hist(bins=10, figsize=(15, 20), alpha=0.4, ax=axs[4, 1], legend=True)
+axs[4, 1].set(xlabel='Mortgage', ylabel='Count')
+data.groupby('Personal_Loan').CreditCard.hist(bins=2, figsize=(15, 20), alpha=0.4, ax=axs[5, 0], legend=True)
+axs[5, 0].set(xlabel='CreditCard', ylabel='Count')
+data.groupby('Personal_Loan').Securities_Account.hist(bins=2, figsize=(15, 20), alpha=0.4, ax=axs[5, 1], legend=True)
+axs[5, 1].set(xlabel='Securities_Account', ylabel='Count')
+data.groupby('Personal_Loan').CD_Account.hist(bins=2, figsize=(15, 20), alpha=0.4, ax=axs[6, 0], legend=True)
+axs[6, 0].set(xlabel='CD_Account', ylabel='Count')
+data.groupby('Personal_Loan').Online.hist(bins=2, figsize=(15, 20), alpha=0.4, ax=axs[6, 1], legend=True, )
+axs[6, 1].set(xlabel='Online', ylabel='Count')
 
 plt.show()
 

@@ -27,30 +27,30 @@ print(f'[TARGET DISTRIBUTION] Number of target in train dataset with value 1:\n'
 print(f'[TARGET DISTRIBUTION] Number of target in test dataset with value 0:\n', sum(y_test == 0))
 print(f'[TARGET DISTRIBUTION] Number of target in test dataset with value 1:\n', sum(y_test == 1))
 
-# #
-# # basic model of logistic regression
-# #
 #
-# # training
-# logit_0 = linear_model.LogisticRegression(max_iter=10000)
-# logit_0.fit(X_train, y_train)
-# print('[LOGIT_0] Estimated coefficient:\n', logit_0.coef_)
+# basic model of logistic regression
 #
-# # testing
-# predicted_target = logit_0.predict(X_test)
-# predicted_proba = logit_0.predict_proba(X_test)
-# predicted_proba_target = predicted_proba[:, 1]
-#
-# # evaluation
-# auc_value_0 = roc_auc_score(y_test, predicted_proba_target)
-# print('[LOGIT_0] AUC value of model:\n', auc_value_0)
-#
-# acc_score_0 = accuracy_score(y_test, predicted_target)
-# conf_matrix_0 = confusion_matrix(predicted_target, y_test, labels=[0, 1])
-# print(acc_score_0)
-# print(conf_matrix_0)
-# print(classification_report(y_test, predicted_target))
-#
+
+# training
+logit_0 = linear_model.LogisticRegression(max_iter=10000)
+logit_0.fit(X_train, y_train)
+print('[LOGIT_0] Estimated coefficient:\n', logit_0.coef_)
+
+# testing
+predicted_target = logit_0.predict(X_test)
+predicted_proba = logit_0.predict_proba(X_test)
+predicted_proba_target = predicted_proba[:, 1]
+
+# evaluation
+auc_value_0 = roc_auc_score(y_test, predicted_proba_target)
+print('[LOGIT_0] AUC value of model:\n', auc_value_0)
+
+acc_score_0 = accuracy_score(y_test, predicted_target)
+conf_matrix_0 = confusion_matrix(predicted_target, y_test, labels=[0, 1])
+print(acc_score_0)
+print(conf_matrix_0)
+print(classification_report(y_test, predicted_target))
+
 # import matplotlib.pyplot as plt
 # import scikitplot as skplt
 #
@@ -198,32 +198,33 @@ print(f'[TARGET DISTRIBUTION] Number of target in test dataset with value 1:\n',
 
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import GridSearchCV
+from sklearn.feature_selection  import SelectKBest, f_classif
 
 logit_4 = linear_model.LogisticRegression(max_iter=10000)
 
-sfs2 = SFS(estimator=logit_4,
-           k_features=(1,13),
-           forward=True,
-           floating=False,
-           scoring='neg_root_mean_squared_error',
-           cv=5)
+# sfs2 = SFS(estimator=logit_4,
+#            k_features=(1,13),
+#            forward=True,
+#            floating=False,
+#            scoring='neg_root_mean_squared_error',
+#            cv=3)
 
-pipe = Pipeline([('sfs', sfs2),
-                 ('logit', logit_4)])
+pipe = Pipeline([('selector', SelectKBest(f_classif, k=1)),
+                 ('classifier', logit_4)])
 
 param_grid = {
-    'sfs__estimator__solver': ['newton-cg', 'lbfgs', 'liblinear'],
-    'sfs__estimator__penalty': ['l2'],
-    'sfs__estimator__C': [0.001, 0.01, 0.1, 1.0, 10.0, 100.0]
+    'selector__k': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+    'classifier__solver': ['newton-cg', 'lbfgs', 'liblinear'],
+    'classifier__penalty': ['l2'],
+    'classifier__C': [0.001, 0.01, 0.1, 1.0, 10.0, 100.0]
 }
 
 gs = GridSearchCV(estimator=pipe,
                   param_grid=param_grid,
                   scoring='neg_root_mean_squared_error',
                   n_jobs=1,
-                  cv=5,
-                  iid=True,
-                  refit=False)
+                  cv=10,
+                  iid=True)
 
 # run gridearch
 gs = gs.fit(X_train, y_train)
@@ -236,7 +237,7 @@ print("Best parameters via GridSearch", gs.best_params_)
 
 logit_4 = gs.best_estimator_
 #logit_3.fit(X_train, y_train)
-print('[LOGIT_3] Estimated coefficient:\n', logit_4.coef_)
+print('[LOGIT_3] Estimated coefficient:\n', logit_4)
 
 # testing
 predicted_target = logit_4.predict(X_test)
