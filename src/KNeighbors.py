@@ -40,8 +40,8 @@ knn_1 = KNeighborsClassifier()
 
 params = {
     'n_neighbors': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    'weights': ['uniform', 'distance'],
-    'algorithm': ['auto', 'ball_tree', 'kd_tree', 'brute'],
+    # 'weights': ['uniform', 'distance'],
+    # 'algorithm': ['auto', 'ball_tree', 'kd_tree', 'brute'],
     'metric': ['euclidean', 'manhattan', 'minkowski', 'chebyshev']
 }
 

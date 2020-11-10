@@ -30,7 +30,7 @@ print(f'[TARGET DISTRIBUTION] Number of target in test dataset with value 1:\n',
 # basic model of Random forest
 #
 
-rf_0 = RandomForestClassifier( random_state=1)
+rf_0 = RandomForestClassifier(random_state=1)
 rf_0.fit(X_train, y_train)
 
 # testing
