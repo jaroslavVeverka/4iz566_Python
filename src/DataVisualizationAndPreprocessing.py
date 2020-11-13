@@ -102,38 +102,38 @@ data = data.drop(columns='Experience')
 data_path = './../data/UniversalBank_Final.csv'
 data.to_csv(data_path, index=False)
 
-# dependent and independents variables
-Y = data['Personal_Loan']
-X = data.drop(columns=['Personal_Loan'])
-
-# split dataset into train and test part 8:2
-X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, stratify=Y, random_state=1)
-print(f'Number of train X: ', X_train.shape)
-print(f'Number of test X: ', X_test.shape)
-
-# Applying of scaling on continuous variables
-
-
-scaler = StandardScaler()
-scaler.fit(X_train.loc[:, ['Age', 'Income', 'CCAvg', 'Mortgage']])
-
-X_train.loc[:, ['Age', 'Income', 'CCAvg', 'Mortgage']] = scaler.transform(X_train.loc[:,
-                                                                          ['Age', 'Income', 'CCAvg', 'Mortgage']])
-X_test.loc[:, ['Age', 'Income', 'CCAvg', 'Mortgage']] = scaler.transform(X_test.loc[:,
-                                                                         ['Age', 'Income', 'CCAvg', 'Mortgage']])
+# # dependent and independents variables
+# Y = data['Personal_Loan']
+# X = data.drop(columns=['Personal_Loan'])
 #
-train_data = pd.concat([y_train, X_train], axis=1)
-test_data = pd.concat([y_test, X_test], axis=1)
-print(f'Number of train data: ', train_data.shape)
-print(f'Number of train data: ', test_data.shape)
-
-# save preprocessed data as csv
-train_data_path = './../data/UniversalBank_Train.csv'
-train_data.to_csv(train_data_path, index=False)
-
-# save preprocessed data as csv
-test_data_path = './../data/UniversalBank_Test.csv'
-test_data.to_csv(test_data_path, index=False)
+# # split dataset into train and test part 8:2
+# X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, stratify=Y, random_state=1)
+# print(f'Number of train X: ', X_train.shape)
+# print(f'Number of test X: ', X_test.shape)
+#
+# # Applying of scaling on continuous variables
+#
+#
+# scaler = StandardScaler()
+# scaler.fit(X_train.loc[:, ['Age', 'Income', 'CCAvg', 'Mortgage']])
+#
+# X_train.loc[:, ['Age', 'Income', 'CCAvg', 'Mortgage']] = scaler.transform(X_train.loc[:,
+#                                                                           ['Age', 'Income', 'CCAvg', 'Mortgage']])
+# X_test.loc[:, ['Age', 'Income', 'CCAvg', 'Mortgage']] = scaler.transform(X_test.loc[:,
+#                                                                          ['Age', 'Income', 'CCAvg', 'Mortgage']])
+# #
+# train_data = pd.concat([y_train, X_train], axis=1)
+# test_data = pd.concat([y_test, X_test], axis=1)
+# print(f'Number of train data: ', train_data.shape)
+# print(f'Number of train data: ', test_data.shape)
+#
+# # save preprocessed data as csv
+# train_data_path = './../data/UniversalBank_Train.csv'
+# train_data.to_csv(train_data_path, index=False)
+#
+# # save preprocessed data as csv
+# test_data_path = './../data/UniversalBank_Test.csv'
+# test_data.to_csv(test_data_path, index=False)
 
 
 

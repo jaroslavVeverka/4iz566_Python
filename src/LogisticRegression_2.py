@@ -1,5 +1,7 @@
 import pandas as pd
 
+from src.RandomForest import X_train
+
 data_path = './../data/UniversalBank_Final.csv'
 data = pd.read_csv(data_path)
 
@@ -13,7 +15,7 @@ print(data.head())
 print(f'[TARGET DISTRIBUTION] Number of target in train dataset with value 0:\n', sum(y == 0))
 print(f'[TARGET DISTRIBUTION] Number of target in train dataset with value 1:\n', sum(y == 1))
 
-print(f'[TARGET DISTRIBUTION] Number of target in test dataset with value 0:\n', sum(y == 0))
+print(f'[TARGET DISTRIBUTION] Nddddumber of target in test dataset with value 0:\n', sum(y == 0))
 print(f'[TARGET DISTRIBUTION] Number of target in test dataset with value 1:\n', sum(y == 1))
 
 from sklearn.linear_model import LogisticRegression
@@ -32,14 +34,19 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratif
 #     ('scale', StandardScaler())
 # ])
 
-preprocess_pipeline = ColumnTransformer([
-    ('num', StandardScaler(), ['Age', 'Income', 'CCAvg', 'Mortgage'])
+num_atributes = ['Age', 'Income', 'CCAvg', 'Mortgage']
+preprocessing_step = ColumnTransformer([
+    ('num', StandardScaler(), num_atributes)
 ], remainder='passthrough')
 
-pipeline = Pipeline([('preprocessing', preprocess_pipeline),
-                     ('classifier', LogisticRegression(max_iter=10000))])
+steps = [
+    ('preprocessing', preprocessing_step),
+    ('classifier', LogisticRegression(max_iter=10000))
+]
 
+pipeline = Pipeline(steps)
 pipeline.fit(X_train, y_train)
+
 print(pipeline.score(X_train, y_train))
 y_pred = pipeline.predict(X_test)
 
@@ -115,10 +122,10 @@ pipeline = Pipeline([('preprocessing', preprocess_pipeline),
                      ('classifier', LogisticRegression())])
 
 params_space = {
-                'selector__k': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
-                'classifier__solver': ['newton-cg', 'lbfgs', 'liblinear'],
-                'classifier__penalty': ['l2'],
-                'classifier__C': [0.001, 0.01, 0.1, 1.0, 10.0, 100.0]
+    'selector__k': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+    'classifier__solver': ['newton-cg', 'lbfgs', 'liblinear'],
+    'classifier__penalty': ['l2'],
+    'classifier__C': [0.001, 0.01, 0.1, 1.0, 10.0, 100.0]
 }
 
 gs_logit = GridSearchCV(estimator=pipeline,
@@ -154,6 +161,7 @@ print(round(time.time() - start_time, 2))
 # import time
 #
 # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=1)
+# print('ahoj')
 #
 # start_time = time.time()
 # preprocess_pipeline = ColumnTransformer([
@@ -162,7 +170,7 @@ print(round(time.time() - start_time, 2))
 #
 # pipeline = Pipeline([('preprocessing', preprocess_pipeline),
 #                      ('selector', SelectKBest(k=5)),
-#                      ('classifier', LogisticRegression())])
+#                      ('classifier',LogisticRegression())])
 #
 # params_space = [{'selector__k': [3, 4]},
 #                 {'classifier': [LogisticRegression()],
@@ -172,7 +180,7 @@ print(round(time.time() - start_time, 2))
 #                 ]
 #
 # gs_logit2 = GridSearchCV(pipeline, params_space, cv=10, verbose=0, scoring='neg_root_mean_squared_error')
-# gs_logit2 = gs_logit2.fit(X, y)
+# gs_logit2 = gs_logit2.fit(X_train, y_train)
 #
 # print(gs_logit2.best_estimator_)
 # print(gs_logit2.best_score_)
