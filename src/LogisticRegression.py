@@ -21,6 +21,10 @@ X_test = test_data.drop(columns=['Personal_Loan'])
 print(f'Number of train X: ', X_train.shape)
 print(f'Number of test X: ', X_test.shape)
 
+print(f'Number of train X: ', X_train.shape)
+print(f'Number of test X: ', X_test.shape)
+
+
 print(f'[TARGET DISTRIBUTION] Number of target in train dataset with value 0:\n', sum(y_train == 0))
 print(f'[TARGET DISTRIBUTION] Number of target in train dataset with value 1:\n', sum(y_train == 1))
 
