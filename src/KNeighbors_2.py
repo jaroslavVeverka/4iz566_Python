@@ -24,7 +24,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.compose import ColumnTransformer
 
 #
-# BASIC MODEL
+# BASIC MODEL dwddwd
 #
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=1)
 
